@@ -1,0 +1,722 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Памятка: Обработка клиентских задач</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Montserrat', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: #333;
+        }
+
+        .container {
+            display: flex;
+            height: 100vh;
+            max-width: 1400px;
+            margin: 0 auto;
+            background: white;
+            box-shadow: 0 0 50px rgba(0,0,0,0.1);
+        }
+
+        /* Sidebar */
+        .sidebar {
+            width: 320px;
+            background: #f8f9fa;
+            border-right: 1px solid #e9ecef;
+            overflow-y: auto;
+            padding: 20px;
+        }
+
+        .sidebar h2 {
+            color: #495057;
+            margin-bottom: 20px;
+            font-size: 18px;
+            border-bottom: 2px solid #FFA92A;
+            padding-bottom: 10px;
+        }
+
+        .quick-ref {
+            margin-bottom: 25px;
+        }
+
+        .ref-item {
+            background: white;
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 10px;
+            border-left: 4px solid #FFA92A;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .ref-item:hover {
+            box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+            transform: translateY(-2px);
+        }
+
+        .ref-item h4 {
+            color: #FFA92A;
+            margin-bottom: 8px;
+            font-size: 14px;
+        }
+
+        .ref-content {
+            font-size: 12px;
+            line-height: 1.4;
+            color: #666;
+        }
+
+        .ref-content.expanded {
+            max-height: none;
+        }
+
+        /* Main content */
+        .main-content {
+            flex: 1;
+            padding: 20px;
+            overflow-y: auto;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .header h1 {
+            color: #2d3436;
+            font-size: 28px;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            color: #636e72;
+            font-size: 16px;
+        }
+
+        /* Process flow */
+        .process-flow {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .process-step {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .process-step:hover {
+            box-shadow: 0 8px 15px rgba(0,0,0,0.15);
+        }
+
+        .step-header {
+            padding: 20px;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .step-header.chief {
+            background: #ffc914;
+            color: #2d3436;
+        }
+
+        .step-header.responsible {
+            background: #d25832;
+            color: white;
+        }
+
+        .step-header.reviewer {
+            background: #5a9178;
+            color: white;
+        }
+
+        .step-title {
+            font-size: 18px;
+            font-weight: 600;
+        }
+
+        .step-role {
+            font-size: 14px;
+            opacity: 0.9;
+        }
+
+        .expand-icon {
+            font-size: 20px;
+            transition: transform 0.3s ease;
+        }
+
+        .expand-icon.expanded {
+            transform: rotate(180deg);
+        }
+
+        .step-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease;
+            background: #f8f9fa;
+        }
+
+        .step-content.expanded {
+            max-height: 1000px;
+        }
+
+        .step-details {
+            padding: 20px;
+        }
+
+        .step-list {
+            list-style: none;
+            counter-reset: step-counter;
+        }
+
+        .step-list li {
+            counter-increment: step-counter;
+            margin-bottom: 15px;
+            padding-left: 40px;
+            position: relative;
+            line-height: 1.5;
+        }
+
+        .step-list li::before {
+            content: counter(step-counter);
+            position: absolute;
+            left: 0;
+            top: 0;
+            background: #2d3436;
+            color: white;
+            width: 25px;
+            height: 25px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            font-weight: bold;
+        }
+
+        .highlight {
+            background: #fff3cd;
+            padding: 15px;
+            border-radius: 8px;
+            border-left: 4px solid #ffc107;
+            margin: 15px 0;
+        }
+
+        .exception {
+            background: #f8d7da;
+            padding: 10px;
+            border-radius: 6px;
+            border-left: 4px solid #dc3545;
+            margin: 10px 0;
+            font-size: 14px;
+        }
+
+        /* Search */
+        .search-box {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e9ecef;
+            border-radius: 8px;
+            font-size: 14px;
+            margin-bottom: 20px;
+        }
+
+        .search-box:focus {
+            outline: none;
+            border-color: #FFA92A;
+        }
+
+        /* Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+        }
+
+        .modal-content {
+            background-color: white;
+            margin: 5% auto;
+            padding: 30px;
+            border-radius: 12px;
+            width: 80%;
+            max-width: 600px;
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+
+        .close {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .close:hover {
+            color: #000;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .timeline {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin: 20px 0;
+            padding: 20px;
+            background: #FFA92A;
+            border-radius: 12px;
+            color: #2d3436;
+        }
+
+        .timeline-item {
+            text-align: center;
+            flex: 1;
+        }
+
+        .timeline-arrow {
+            font-size: 24px;
+            margin: 0 10px;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                flex-direction: column;
+                height: auto;
+            }
+            
+            .sidebar {
+                width: 100%;
+                height: auto;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="sidebar">
+            <input type="text" class="search-box" placeholder="Поиск по документу..." id="searchBox">
+            
+            <div class="quick-ref">
+                <h2>📋 Быстрый доступ</h2>
+                
+                <div class="ref-item" onclick="openModal('deadlines')">
+                    <h4>⏰ Сроки выполнения</h4>
+                    <div class="ref-content">
+                        Стандартные: 3 раб. дня<br>
+                        Срочные: 1 раб. день<br>
+                        Объёмные: индивидуально
+                    </div>
+                </div>
+
+                <div class="ref-item" onclick="openModal('naming')">
+                    <h4>📄 Именование файлов</h4>
+                    <div class="ref-content">
+                        YYYY-MM-DD МЫ КОНТРАГЕНТ Документ № 00
+                    </div>
+                </div>
+
+                <div class="ref-item" onclick="openModal('asana')">
+                    <h4>📋 Столбцы Asana</h4>
+                    <div class="ref-content">
+                        Сделать → В работе → На проверку → Сделано
+                    </div>
+                </div>
+
+                <div class="ref-item" onclick="openModal('hours')">
+                    <h4>⏱️ Проставление часов</h4>
+                    <div class="ref-content">
+                        Шаг 0,5 часа, округление вверх<br>
+                        Срочные × 2, Англ. документы × 2
+                    </div>
+                </div>
+
+                <div class="ref-item" onclick="openModal('exceptions')">
+                    <h4>⚠️ Исключения</h4>
+                    <div class="ref-content">
+                        КЕДЫ, ИКРА, ПОСТПОСТ, ЧАРОИТ, ЛЕБЕДЕВА, ИТМС
+                    </div>
+                </div>
+
+                <div class="ref-item" onclick="openModal('folders')">
+                    <h4>📁 Структура папок</h4>
+                    <div class="ref-content">
+                        Папка клиента → Папка контрагента/процесса
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="main-content">
+            <div class="header">
+                <h1>Обработка клиентских задач</h1>
+                <p>Пошаговое руководство для юристов "ИнтелЮр"</p>
+            </div>
+
+            <div class="timeline">
+                <div class="timeline-item">
+                    <div>📋 Поступление</div>
+                    <small>Почта/чат/созвон</small>
+                </div>
+                <div class="timeline-arrow">→</div>
+                <div class="timeline-item">
+                    <div>👨‍💼 Главный юрист</div>
+                    <small>Обработка и назначение</small>
+                </div>
+                <div class="timeline-arrow">→</div>
+                <div class="timeline-item">
+                    <div>⚖️ Ответственный</div>
+                    <small>Выполнение задачи</small>
+                </div>
+                <div class="timeline-arrow">→</div>
+                <div class="timeline-item">
+                    <div>✅ Проверяющий</div>
+                    <small>Контроль качества</small>
+                </div>
+                <div class="timeline-arrow">→</div>
+                <div class="timeline-item">
+                    <div>📤 Отправка</div>
+                    <small>Ответ клиенту</small>
+                </div>
+            </div>
+
+            <div class="process-flow">
+                <div class="process-step">
+                    <div class="step-header chief" onclick="toggleStep(this)">
+                        <div>
+                            <div class="step-title">Обработка Главным юристом</div>
+                            <div class="step-role">👨‍💼 Создание задачи и назначение ответственных</div>
+                        </div>
+                        <div class="expand-icon">▼</div>
+                    </div>
+                    <div class="step-content">
+                        <div class="step-details">
+                            <div class="exception">
+                                <strong>⚠️ Исключения:</strong> Для клиентов КЕДЫ, ИКРА, ПОСТПОСТ, ЧАРОИТ, ЛЕБЕДЕВА, ИТМС расчёт времени НЕ требуется
+                            </div>
+                            
+                            <ul class="step-list">
+                                <li>Написать клиенту расчёт времени и объёма работ, получить подтверждение</li>
+                                <li>Создать задачу в Asana</li>
+                                <li>Назначить ответственного юриста (кто будет выполнять задачу)</li>
+                                <li>Указать срок по задаче (дата, когда надо вернуться с ответом клиенту)</li>
+                                <li>Создать сабтаски с указанием внутренних сроков выполнения и ответственных за каждый сабтаск</li>
+                                <li>Если у ответственного нет доступа к описанию задачи (в почте, Youjile, чате с клиентом) — скопировать всю информацию в Asana и дать референсы к ЯндексДиску</li>
+                                <li>В чате «ИнтелЮр работаем)» тегнуть ответственного по задаче. Если в сабтасках не более 2 человек, можно тегнуть всех сразу, распределив роли</li>
+                                <li>После получения сообщения о готовности задачи от проверяющего — проверить черновик с вложениями и отправить ответ клиенту</li>
+                            </ul>
+
+                            <div class="highlight">
+                                <strong>📝 Важно:</strong> По ИКРЕ ответ направляется в Youjile, а не на почту
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="process-step">
+                    <div class="step-header responsible" onclick="toggleStep(this)">
+                        <div>
+                            <div class="step-title">Обработка ответственным юристом</div>
+                            <div class="step-role">⚖️ Выполнение задачи и подготовка документов</div>
+                        </div>
+                        <div class="expand-icon">▼</div>
+                    </div>
+                    <div class="step-content">
+                        <div class="step-details">
+                            <ul class="step-list">
+                                <li>Провести первичную оценку задачи</li>
+                                <li>При необходимости связаться с менеджером клиента для уточнения деталей</li>
+                                <li>Обработать документы на своём ПК (не удалять до отправки клиенту)</li>
+                                <li>Сохранить документы в папку на Яндекс.Диске или направить в чат ТГ</li>
+                                <li>При проверке нового подрядчика — скачать выписку и проверить ОКВЭД</li>
+                                <li>Написать черновик письма клиенту</li>
+                                <li>Обработать задачу в Asana (переместить в "На проверку")</li>
+                                <li>Написать в ТГ статус задачи, тегнув проверяющего</li>
+                                <li>Проставить свои часы в таблице</li>
+                            </ul>
+
+                            <div class="highlight">
+                                <strong>⏰ Внутренние сроки:</strong><br>
+                                • Стандартные задачи: 2 рабочих дня<br>
+                                • Срочные: согласовывается с проверяющим<br>
+                                • Объёмные: согласовывается с проверяющим
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="process-step">
+                    <div class="step-header reviewer" onclick="toggleStep(this)">
+                        <div>
+                            <div class="step-title">Обработка проверяющим юристом</div>
+                            <div class="step-role">🔍 Контроль качества и финальная проверка</div>
+                        </div>
+                        <div class="expand-icon">▼</div>
+                    </div>
+                    <div class="step-content">
+                        <div class="step-details">
+                            <ul class="step-list">
+                                <li>Сохранить документы у себя на ПК</li>
+                                <li>Проверить ответ и документы, подготовленные ответственным</li>
+                                <li>Скопировать документы на Яндекс.Диск или направить в чат ТГ</li>
+                                <li>Проверить черновик письма</li>
+                                <li>Обработать задачу в Asana (переместить в "Сделано")</li>
+                                <li>Написать в чат ТГ статус задачи, тегнув Главного юриста</li>
+                                <li>Проставить свои часы в таблице</li>
+                            </ul>
+
+                            <div class="highlight">
+                                <strong>📋 Правило двух глаз:</strong> Каждую задачу должны посмотреть минимум 2 человека. Исключения: незначительные правки, техническое сравнение версий, простые вопросы.
+                            </div>
+
+                            <div class="highlight">
+                                <strong>⏰ Внутренние сроки:</strong><br>
+                                • Стандартные задачи: 1 рабочий день<br>
+                                • Объёмные: не менее 2 рабочих дней
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal windows -->
+    <div id="modal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal()">&times;</span>
+            <div id="modal-body"></div>
+        </div>
+    </div>
+
+    <script>
+        function toggleStep(header) {
+            const content = header.nextElementSibling;
+            const icon = header.querySelector('.expand-icon');
+            
+            content.classList.toggle('expanded');
+            icon.classList.toggle('expanded');
+        }
+
+        function openModal(type) {
+            const modal = document.getElementById('modal');
+            const modalBody = document.getElementById('modal-body');
+            
+            let content = '';
+            
+            switch(type) {
+                case 'deadlines':
+                    content = `
+                        <h2>⏰ Сроки выполнения задач</h2>
+                        <h3>Для клиента:</h3>
+                        <ul>
+                            <li><strong>Стандартные задачи:</strong> 3 рабочих дня (не считая даты направления)</li>
+                            <li><strong>Срочные задачи:</strong> 1 рабочий день (не считая даты направления)</li>
+                            <li><strong>Объёмные задачи:</strong> рассчитывается индивидуально по согласованию</li>
+                        </ul>
+                        <h3>Внутренние сроки:</h3>
+                        <ul>
+                            <li><strong>Стандартные:</strong> 2 дня ответственному + 1 день проверяющему</li>
+                            <li><strong>Срочные:</strong> согласовываются, но в сумме не более 1 дня</li>
+                            <li><strong>Объёмные:</strong> согласовываются, у проверяющего минимум 2 дня</li>
+                        </ul>
+                    `;
+                    break;
+                case 'naming':
+                    content = `
+                        <h2>📝 Правила именования документов</h2>
+                        <p><strong>Формат:</strong> YYYY-MM-DD МЫ КОНТРАГЕНТ Документ № 00</p>
+                        <h3>Расшифровка:</h3>
+                        <ul>
+                            <li><strong>YYYY-MM-DD</strong> — дата создания документа</li>
+                            <li><strong>МЫ</strong> — наш клиент</li>
+                            <li><strong>КОНТРАГЕНТ</strong> — контрагент нашего клиента</li>
+                            <li><strong>Документ</strong> — тип (Договор, Соглашение, ДС, Заказ, Приложение, Справка)</li>
+                            <li><strong>№</strong> — номер приложения, ДС и т.п.</li>
+                        </ul>
+                        <h3>Примеры:</h3>
+                        <ul>
+                            <li>2025-06-07 ИКРА ПОДРЯДЧИК Договор</li>
+                            <li>2025-06-07 КЕДЫ ПОСТАВЩИК ДС № 01</li>
+                        </ul>
+                        <p><strong>Важно:</strong> Сохраняются все версии в хронологическом порядке, можно добавлять пометки: "не подписано", "версия клиента", "принятые правки"</p>
+                    `;
+                    break;
+                case 'asana':
+                    content = `
+                        <h2>📊 Столбцы Asana</h2>
+                        <div style="display: flex; flex-wrap: wrap; gap: 15px;">
+                            <div style="background: #e3f2fd; padding: 15px; border-radius: 8px; flex: 1; min-width: 200px;">
+                                <h4>📝 Сделать</h4>
+                                <p>Задачи, поступившие в работу. Создаёт Главный юрист.</p>
+                            </div>
+                            <div style="background: #fff3e0; padding: 15px; border-radius: 8px; flex: 1; min-width: 200px;">
+                                <h4>⚡ В работе</h4>
+                                <p>Задачи на первичной обработке. Перемещает ответственный юрист.</p>
+                            </div>
+                            <div style="background: #f3e5f5; padding: 15px; border-radius: 8px; flex: 1; min-width: 200px;">
+                                <h4>🔍 На проверку</h4>
+                                <p>Задачи для проверки. Перемещает ответственный после завершения.</p>
+                            </div>
+                            <div style="background: #e8f5e8; padding: 15px; border-radius: 8px; flex: 1; min-width: 200px;">
+                                <h4>✅ Сделано</h4>
+                                <p>Готовые к отправке. Перемещает проверяющий.</p>
+                            </div>
+                            <div style="background: #ffebee; padding: 15px; border-radius: 8px; flex: 1; min-width: 200px;">
+                                <h4>📤 Отправлено клиенту</h4>
+                                <p>Отправленные задачи. Перемещает Главный юрист.</p>
+                            </div>
+                            <div style="background: #fafafa; padding: 15px; border-radius: 8px; flex: 1; min-width: 200px;">
+                                <h4>⏸️ На стопе</h4>
+                                <p>Остановленные клиентом задачи.</p>
+                            </div>
+                        </div>
+                        <p style="margin-top: 15px;"><strong>Важно:</strong> Полностью закрывает задачу только Главный юрист</p>
+                    `;
+                    break;
+                case 'hours':
+                    content = `
+                        <h2>⏱️ Проставление часов</h2>
+                        <h3>Общие правила:</h3>
+                        <ul>
+                            <li>Часы ставятся исходя из фактически затраченного времени на обработку задачи</li>
+                            <li>Шаг: 0,5 часа</li>
+                            <li>Округление в большую сторону</li>
+                            <li>Часы ставятся в столбец со своим именем</li>
+                            <li><strong>Часы клиента заполняются только Главным юристом</strong></li>
+                        </ul>
+                        <h3>Множители:</h3>
+                        <ul>
+                            <li><strong>Срочные задачи:</strong> время × 2</li>
+                            <li><strong>Англоязычные документы:</strong> время × 2</li>
+                        </ul>
+                        <h3>Обязательные примечания:</h3>
+                        <ul>
+                            <li>Задача срочная</li>
+                            <li>Работа с англоязычными документами</li>
+                            <li>Задача не для клиента, но оплачивается клиентом</li>
+                            <li>Ответ не отправлялся на почту (созвон, устная консультация)</li>
+                        </ul>
+                        <h3>Поля для заполнения:</h3>
+                        <ul>
+                            <li><strong>Дата:</strong> дата отправки ответа клиенту</li>
+                            <li><strong>Клиент:</strong> из списка или "Разовый"</li>
+                            <li><strong>Сделано:</strong> описание работы с указанием контрагента, номера и даты документа</li>
+                            <li><strong>Внутренние примечания:</strong> комментарии для Главного юриста, объясняющие количество часов (клиент не видит)</li>
+                        </ul>
+                    `;
+                    break;
+                case 'exceptions':
+                    content = `
+                        <h2>⚠️ Клиенты-исключения</h2>
+                        <p>Для следующих клиентов <strong>НЕ требуется</strong> написание расчёта времени и получение подтверждения:</p>
+                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 10px; margin: 20px 0;">
+                            <div style="background: #ffebee; padding: 15px; border-radius: 8px; text-align: center; font-weight: bold;">КЕДЫ</div>
+                            <div style="background: #e8f5e8; padding: 15px; border-radius: 8px; text-align: center; font-weight: bold;">ИКРА</div>
+                            <div style="background: #e3f2fd; padding: 15px; border-radius: 8px; text-align: center; font-weight: bold;">ПОСТПОСТ</div>
+                            <div style="background: #f3e5f5; padding: 15px; border-radius: 8px; text-align: center; font-weight: bold;">ЧАРОИТ</div>
+                            <div style="background: #fff3e0; padding: 15px; border-radius: 8px; text-align: center; font-weight: bold;">ЛЕБЕДЕВА</div>
+                            <div style="background: #fafafa; padding: 15px; border-radius: 8px; text-align: center; font-weight: bold;">ИТМС</div>
+                        </div>
+                        <p><strong>Особенность ИКРЫ:</strong> Описание задач находится в Youjile, ответы также направляются в Youjile.</p>
+                    `;
+                    break;
+                case 'folders':
+                    content = `
+                        <h2>📁 Структура папок на Яндекс.Диске</h2>
+                        <h3>Иерархия:</h3>
+                        <ol>
+                            <li><strong>Папка нашего клиента</strong> (верхний уровень)</li>
+                            <li><strong>Папка контрагента/процесса:</strong>
+                                <ul>
+                                    <li>Папка клиента или подрядчика</li>
+                                    <li>OR папка отдельных процессов:</li>
+                                    <ul>
+                                        <li>Персональные данные</li>
+                                        <li>Корпоративное</li>
+                                        <li>Трудовые</li>
+                                        <li>Партнёры</li>
+                                        <li>Сайт</li>
+                                        <li>и т.п.</li>
+                                    </ul>
+                                </ul>
+                            </li>
+                        </ol>
+                        <h3>Принципы организации:</h3>
+                        <ul>
+                            <li>Документы сохраняются в хронологическом порядке</li>
+                            <li>Сохраняются ВСЕ версии (рабочие, промежуточные, не согласованные)</li>
+                            <li>Можно добавлять пометки в названии файлов</li>
+                        </ul>
+                    `;
+                    break;
+            }
+            
+            modalBody.innerHTML = content;
+            modal.style.display = 'block';
+        }
+
+        function closeModal() {
+            document.getElementById('modal').style.display = 'none';
+        }
+
+        // Search functionality
+        document.getElementById('searchBox').addEventListener('input', function(e) {
+            const searchTerm = e.target.value.toLowerCase();
+            const allText = document.querySelectorAll('.step-details, .ref-content');
+            
+            if (searchTerm === '') {
+                // Reset highlighting
+                allText.forEach(element => {
+                    element.innerHTML = element.innerHTML.replace(/<mark>/g, '').replace(/<\/mark>/g, '');
+                });
+                return;
+            }
+            
+            allText.forEach(element => {
+                const text = element.textContent.toLowerCase();
+                if (text.includes(searchTerm)) {
+                    // Highlight search term
+                    const regex = new RegExp(`(${searchTerm})`, 'gi');
+                    element.innerHTML = element.innerHTML.replace(regex, '<mark style="background: yellow;">$1</mark>');
+                }
+            });
+        });
+
+        // Close modal when clicking outside
+        window.onclick = function(event) {
+            const modal = document.getElementById('modal');
+            if (event.target === modal) {
+                modal.style.display = 'none';
+            }
+        }
+    </script>
+</body>
+</html>
